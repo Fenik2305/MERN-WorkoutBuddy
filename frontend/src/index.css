@@ -73,8 +73,8 @@ label, input {
 }
 input {
   padding: 10px;
-  margin-top: 7px;
-  margin-bottom: 15px;
+  margin-top: 10px;
+  margin-bottom: 20px;
   width: 100%;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -96,4 +96,7 @@ div.error {
   color: var(--error);
   border-radius: 4px;
   margin: 20px 0;
+}
+input.error {
+  border: 1px solid var(--error);
 }
