@@ -4,8 +4,21 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
 const WorkoutDetails = ( {workout} ) => {
     const { dispatch } = useWorkoutsContext();
+    
+    const handleEdit = async () => {
+        const response = await fetch("/api/workouts/" + workout._id, {
+            method: 'GET'
+        });
 
-    const handleClick = async () => {
+        const json = await response.json();
+
+        if (response.ok) {
+            console.log(json)
+            dispatch({type: 'CHANGE_FORM', payload: json})
+        }
+    }
+
+    const handleDelete = async () => {
         const response = await fetch("/api/workouts/" + workout._id, {
             method: 'DELETE'
         });
@@ -23,8 +36,10 @@ const WorkoutDetails = ( {workout} ) => {
             <p><strong>Load (kg): </strong>{workout.load}</p>
             <p><strong>Reps: </strong>{workout.reps}</p>
             <p>{formatDistanceToNow(new Date(workout.createdAt), { addSuffix: true })}</p>
-            <span className="material-symbols-outlined" onClick={handleClick}>delete</span>
-            {/*<span className="material-symbols-outlined" onClick={handleClick}>edit</span>*/}
+            <div className="workout-actions-container">
+                <span className="material-symbols-outlined" onClick={handleEdit}>edit</span>
+                <span className="material-symbols-outlined" onClick={handleDelete}>delete</span> 
+            </div>
         </div>
     )
 }

@@ -56,15 +56,21 @@ header a {
   font-size: 0.9em;
   color: #555;
 }
-.workout-details span {
+
+.workout-actions-container {
   position: absolute;
   top: 20px;
   right: 20px;
-  cursor: pointer;
+}
+
+.workout-actions-container span {
+  position: flex;
+  color: #333;
   background: #f1f1f1;
   padding: 6px;
-  border-radius: 50%;
-  color: #333;
+  margin-left: 12px;
+  border-radius: 35%;
+  cursor: pointer;
 }
 
 /* new workout form */

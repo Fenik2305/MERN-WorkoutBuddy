@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { useWorkoutsContext } from '../hooks/useWorkoutsContext.js'
 
-const WorkoutForm = () => {
+const EditWorkoutForm = ({ toEdit }) => {
     const { dispatch } = useWorkoutsContext();
 
-    const [title, setTitle] = useState('');
-    const [load, setLoad] = useState('');
-    const [reps, setReps] = useState('');
+    const [title, setTitle] = useState(toEdit.title);
+    const [load, setLoad] = useState(toEdit.load);
+    const [reps, setReps] = useState(toEdit.reps);
     const [error, setError] = useState(null);
     const [emptyFields, setEmptyFields] = useState([]);
 
@@ -15,8 +15,8 @@ const WorkoutForm = () => {
 
       const workout = {title, load, reps}
 
-      const response = await fetch('/api/workouts', {
-        method: 'POST',
+      const response = await fetch('/api/workouts/' + toEdit._id, {
+        method: 'PATCH',
         body: JSON.stringify(workout),
         headers: {
             'Content-Type': 'application/json'
@@ -36,15 +36,24 @@ const WorkoutForm = () => {
         setTitle('')
         setLoad('')
         setReps('')
-        dispatch({type: 'CREATE_WORKOUT', payload: json})
+      }
+
+      const updatedWorkouts = await fetch('/api/workouts', {
+        method: 'GET',
+      })
+
+      const workoutsJSON = await updatedWorkouts.json();
+
+      if (response.ok) {
+        dispatch({type: 'EDIT_WORKOUT', payload: workoutsJSON})
       }
     }
 
     return(
         <form className='create' onSubmit={handleSubmit}>
-            <h3>Add a new workout</h3>
+            <h3>Edit workout</h3>
 
-            <label>Title:</label>
+            <label>New title:</label>
             <input 
               type='text' 
               onChange={(e) => setTitle(e.target.value)}
@@ -52,7 +61,7 @@ const WorkoutForm = () => {
               className={emptyFields.includes('title') ? 'error' : ''}
             />
 
-            <label>Load (kg):</label>
+            <label>New load (kg):</label>
             <input 
               type='number' 
               onChange={(e) => setLoad(e.target.value)}
@@ -60,7 +69,7 @@ const WorkoutForm = () => {
               className={emptyFields.includes('load') ? 'error' : ''}
             />
 
-            <label>Reps:</label>
+            <label>New reps:</label>
             <input 
               type='number' 
               onChange={(e) => setReps(e.target.value)}
@@ -68,10 +77,10 @@ const WorkoutForm = () => {
               className={emptyFields.includes('reps') ? 'error' : ''}
             />
 
-            <button>Add workout</button>
+            <button>Update workout</button>
             {error && <div className='error'>{error}</div>}
         </form>
     )
 }
 
-export default WorkoutForm
+export default EditWorkoutForm
