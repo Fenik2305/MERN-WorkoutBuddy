@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { useWorkoutsContext } from '../hooks/useWorkoutsContext.js'
+import { useAuthContext } from '../hooks/useAuthContext.js';
 
 const EditWorkoutForm = ({ toEdit }) => {
     const { dispatch } = useWorkoutsContext();
+    const {user} = useAuthContext()
 
     const [title, setTitle] = useState(toEdit.title);
     const [load, setLoad] = useState(toEdit.load);
@@ -13,13 +15,19 @@ const EditWorkoutForm = ({ toEdit }) => {
     const handleSubmit = async (e) => {
       e.preventDefault()
 
+      if (!user) {
+        setError('You must be logged in!')
+        return
+      }
+
       const workout = {title, load, reps}
 
       const response = await fetch('/api/workouts/' + toEdit._id, {
         method: 'PATCH',
         body: JSON.stringify(workout),
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user.token}`
         }
       })
 
@@ -40,11 +48,15 @@ const EditWorkoutForm = ({ toEdit }) => {
 
       const updatedWorkouts = await fetch('/api/workouts', {
         method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+      }
       })
 
       const workoutsJSON = await updatedWorkouts.json();
 
-      if (response.ok) {
+      if (updatedWorkouts.ok) {
         dispatch({type: 'EDIT_WORKOUT', payload: workoutsJSON})
       }
     }
